@@ -1,0 +1,2 @@
+Skeleton 5
+d2f2d"Int"d"TextIO"ad"Parser"h3aä¢CLrVals"jh1aä¢Token"gp2ä¢LrParser"ÿ.gp1e"CLrValsFun"aä¢CLex"jh1aä¢Tokens"gp2ÿ ÿ"gp1e"CLexFun"ad"CParser"jh3aä¢ParserData"gp2ÿ ÿ‚ad"Lex"gp1ÿaÿ9gp1ÿ9gp1e"Join"

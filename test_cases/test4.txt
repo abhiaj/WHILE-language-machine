@@ -1,0 +1,8 @@
+program modulo::
+    var X, Y, Z: int;
+{
+    read X;
+    read Y;
+    Z := X % Y; 
+    write Z;
+}

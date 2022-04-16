@@ -1,0 +1,13 @@
+program Greater::
+    var A, B: int;
+{
+    read A;
+    read B;
+
+    if (A > B) then{
+        write A;
+    } else {
+        write B;
+    }
+    endif;
+}

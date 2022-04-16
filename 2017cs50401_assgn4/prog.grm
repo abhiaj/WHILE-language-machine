@@ -1,0 +1,234 @@
+(* Keyword management *)
+
+(* Hashmap for storing the list of declared variables *)
+structure StrTbl = HashTableFn(
+struct
+	type hash_key = string
+	val hashVal = HashString.hashString
+	val sameKey = (op=) : string * string -> bool
+end);
+
+val t1 : int StrTbl.hash_table = StrTbl.mkTable(100, Fail "Not found");
+
+(* check function to check if string is in hashmap or not
+if it is hashmap, 1 denotes INT var and 0 denotes BOOL var *)
+val err_msg = fn variable => TextIO.output(TextIO.stdOut, "PARSE error\n"^"variable "^variable^" not defined\n\n\n")
+val check = fn variable => case ( StrTbl.find t1 variable ) of 
+				SOME 1 => 1
+				| SOME 0 => 0
+				| _ => (err_msg(variable); OS.Process.exit(OS.Process.failure); 2)
+
+(* 1 is int, 0 is bool *)
+(* function to insert list of variables from declaration to hashmap *)
+fun insert_list (var::list, t) = ( StrTbl.insert t1 (var,t); insert_list (list, t) )
+				| insert_list ([], t) = true;
+
+
+
+(* function to check if an expresssion is intexpression *)
+fun check_iexp (AST.IEXP v) = true
+				| check_iexp (AST.TIMES (v, x)) = true
+				| check_iexp (AST.PLUS (v, x)) = true
+				| check_iexp (AST.MINUS (v, x)) = true
+				| check_iexp (AST.MOD (v, x)) = true
+				| check_iexp (AST.DIV (v, x)) = true
+				| check_iexp (AST.INTEGER v) = true
+				| check_iexp (AST.ID v) = true
+				| check_iexp (AST.NEG v) = true
+				| check_iexp _  = false
+
+fun check_iexp2 (e1, e2) = (check_iexp (e1) andalso check_iexp (e2) )
+
+
+(* function to check if an expresssion is boolexpression *)
+fun check_bexp (AST.BEXP v) = true
+				| check_bexp (AST.GT (v, x)) = true
+				| check_bexp (AST.LT (v, x)) = true
+				| check_bexp (AST.GTE (v, x)) = true
+				| check_bexp (AST.LTE (v, x)) = true
+				| check_bexp (AST.EQ (v, x)) = true
+				| check_bexp (AST.NEQ (v, x)) = true
+
+				| check_bexp (AST.AND (v, x)) = true
+				| check_bexp (AST.OR (v, x)) = true
+
+				| check_bexp (AST.NOT v) = true
+				
+				| check_bexp (AST.IDB v) = true
+				| check_bexp (AST.TT ) = true
+				| check_bexp (AST.FF ) = true
+				| check_bexp _  = false
+
+fun check_bexp2 (e1, e2) = check_bexp (e1) andalso check_bexp (e2) 
+
+
+
+fun check_i2_b2 (e1, e2) = ( check_bexp (e1) andalso check_bexp (e2) ) 
+				orelse ( check_iexp (e1) andalso check_iexp (e2)  )
+
+
+(* function to exit the program abruptly in case of a semantic error *)
+val exit_prog = fn v => ( TextIO.output(TextIO.stdOut, "\n\n Line: [" ^ Int.toString v ^ "] INvalid semantics, , exitinggggg.....\n\n "); OS.Process.exit(OS.Process.failure); v)
+
+val exit_prog2 = fn (v:int) => (TextIO.output(TextIO.stdOut, Int.toString v); 2)
+
+
+%%
+
+
+%eop EOF
+%verbose
+%pure
+%name C
+
+%term
+    EOF
+	|PROGRAM
+	|DCOLON
+	|COLON
+	|VAR
+	|INT
+	|BOOL
+	|COMMA
+	|LCPAREN
+	|RCPAREN
+	|ASSIGN
+	|IF
+	|THEN
+	|ELSE
+	|ENDIF
+	|WHILE
+	|DO
+	|ENDWH
+	|LPAREN
+	|RPAREN
+	|OR
+	|AND
+	|TRUE
+	|FALSE
+	|NOT
+	|LT
+	|GT
+	|LTE
+	|GTE
+	|EQ
+	|NEQ
+	|PLUS
+	|MINUS
+	|MUL
+	|DIV
+	|MOD
+	|SCOLON
+	|READ
+	|WRITE
+	|IDENTIFIER of string
+	|NUMBER of int
+	|NEG
+
+
+%nonterm
+	start of AST.PROGRAM
+	|declarations of AST.DECLARATION list
+	|declaration of AST.DECLARATION
+	|commandlist of AST.COMMAND list
+	|command of AST.COMMAND
+	|variablelist of string list
+	|variable of string
+	|expression of AST.EXP
+	|or_exp of AST.EXP
+	|and_exp of AST.EXP
+	|eq_exp of AST.EXP
+	|rel_exp of AST.EXP
+	|add_exp of AST.EXP
+	|mult_exp of AST.EXP
+	|unary_exp of AST.EXP
+	|primary_exp of AST.EXP
+
+    
+%right ASSIGN
+%left OR
+%left AND
+%left EQ NEQ
+%left LT LTE GT GTE
+%left PLUS MINUS
+%left MUL DIV MOD
+%left NEG
+%left NOT            
+
+%pos int
+%noshift EOF
+
+
+%%
+
+
+start: PROGRAM IDENTIFIER DCOLON declarations LCPAREN commandlist RCPAREN  (AST.PROG(IDENTIFIER, declarations, commandlist))
+declarations: declaration declarations         (declaration::declarations)
+			| 					([])
+
+declaration: VAR variablelist COLON INT SCOLON     ( (insert_list(variablelist, 1)); AST.DECL(variablelist, AST.INT))
+			| VAR variablelist COLON BOOL SCOLON     ( (insert_list(variablelist, 0)); AST.DECL(variablelist, AST.BOOL))
+
+variablelist: variable COMMA variablelist				(variable::variablelist)
+			| variable 							([variable])
+			| ([])
+
+
+
+commandlist: command SCOLON commandlist   (command::commandlist)
+			| 			([])
+
+command: variable ASSIGN expression    (if  ( check(variable) = 1 andalso check_iexp(expression) )
+				orelse 
+				( check(variable) = 0 andalso check_bexp(expression) )  then AST.SET(variable, expression) else(exit_prog ASSIGNleft; AST.ERROR2) )  
+
+			| READ variable						(if ( check(variable)=1 orelse check(variable)=0 ) then AST.READ(variable) else(exit_prog READleft; AST.ERROR2))
+			| WRITE expression					(if check_iexp(expression) then AST.WRITE(expression) else(exit_prog WRITEleft; AST.ERROR2) )
+			| IF expression THEN LCPAREN commandlist RCPAREN ELSE LCPAREN commandlist RCPAREN ENDIF   (if check_bexp(expression) then AST.ITE(expression, commandlist1, commandlist2) else(exit_prog IFleft; AST.ERROR2))
+    		| WHILE expression DO LCPAREN commandlist RCPAREN ENDWH        (if check_bexp(expression) then AST.WHILE(expression, commandlist) else(exit_prog WHILEleft; AST.ERROR2))
+
+expression: or_exp (or_exp)
+
+or_exp: or_exp OR and_exp (if check_bexp2(or_exp, and_exp) then AST.OR(or_exp, and_exp) else (exit_prog ORleft; AST.ERROR))
+			| and_exp (and_exp)
+
+and_exp: and_exp AND eq_exp (if check_bexp2(and_exp, eq_exp) then AST.AND(and_exp, eq_exp) else (exit_prog ANDleft; AST.ERROR))
+			| eq_exp (eq_exp)
+
+eq_exp: eq_exp EQ rel_exp (if check_i2_b2(eq_exp, rel_exp) then AST.EQ(eq_exp, rel_exp) else (exit_prog EQleft; AST.ERROR))
+			| eq_exp NEQ rel_exp (if check_i2_b2(eq_exp, rel_exp) then AST.NEQ(eq_exp, rel_exp) else (exit_prog NEQleft; AST.ERROR))
+			| rel_exp (rel_exp)
+	
+rel_exp: rel_exp GT add_exp (if check_i2_b2(rel_exp, add_exp) then AST.GT(rel_exp, add_exp) else (exit_prog GTleft; AST.ERROR))
+			| rel_exp GTE add_exp (if check_i2_b2(rel_exp, add_exp) then AST.GTE(rel_exp, add_exp) else (exit_prog GTEleft; AST.ERROR))
+			| rel_exp LT add_exp (if check_i2_b2(rel_exp, add_exp) then AST.LT(rel_exp, add_exp) else (exit_prog LTleft; AST.ERROR))
+			| rel_exp LTE add_exp (if check_i2_b2(rel_exp, add_exp) then AST.LTE(rel_exp, add_exp) else (exit_prog LTEleft; AST.ERROR))
+			| add_exp (add_exp)
+
+add_exp: mult_exp PLUS add_exp (if check_iexp2(mult_exp, add_exp)=true then AST.PLUS(mult_exp, add_exp) else (exit_prog PLUSleft; AST.ERROR))
+			| mult_exp MINUS add_exp (if check_iexp2(mult_exp, add_exp)=true then AST.MINUS(mult_exp, add_exp) else (exit_prog MINUSleft; AST.ERROR))
+			| mult_exp (mult_exp)
+
+mult_exp: mult_exp MUL unary_exp (if check_iexp2(mult_exp, unary_exp)=true  then AST.TIMES(mult_exp, unary_exp) else (exit_prog MULleft; AST.ERROR))
+			| mult_exp DIV unary_exp  (if check_iexp2(mult_exp, unary_exp)=true  then AST.DIV(mult_exp, unary_exp) else (exit_prog DIVleft; AST.ERROR))
+			| mult_exp MOD unary_exp  (if check_iexp2(mult_exp, unary_exp)=true  then AST.MOD(mult_exp, unary_exp) else (exit_prog MODleft; AST.ERROR))
+			| unary_exp  (unary_exp)
+
+
+unary_exp: NEG unary_exp  (if check_iexp(unary_exp)=true then (AST.NEG(unary_exp)) else (exit_prog NEGleft; AST.ERROR))
+			| NOT unary_exp (if check_bexp(unary_exp)=true then (AST.NOT(unary_exp)) else (exit_prog NOTleft; AST.ERROR))
+			| primary_exp (primary_exp)
+
+primary_exp: variable (if check (variable) = 1 then AST.ID(variable) else if check(variable) = 0 then AST.IDB(variable) else (exit_prog 2; AST.ID(variable)))
+			| NUMBER  (AST.INTEGER(NUMBER))
+			| TRUE  (AST.TT)
+			| FALSE (AST.FF)
+			| LPAREN expression RPAREN (expression)
+
+variable: IDENTIFIER                  			(IDENTIFIER)
+
+
+
+
+
+

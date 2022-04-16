@@ -1,0 +1,1240 @@
+
+state 0:
+
+	start : . PROGRAM IDENTIFIER DCOLON declarations LCPAREN commandlist RCPAREN 
+
+	PROGRAM	shift 1
+
+	start	goto 94
+
+	.	error
+
+
+state 1:
+
+	start : PROGRAM . IDENTIFIER DCOLON declarations LCPAREN commandlist RCPAREN 
+
+	IDENTIFIER	shift 2
+
+
+	.	error
+
+
+state 2:
+
+	start : PROGRAM IDENTIFIER . DCOLON declarations LCPAREN commandlist RCPAREN 
+
+	DCOLON	shift 3
+
+
+	.	error
+
+
+state 3:
+
+	start : PROGRAM IDENTIFIER DCOLON . declarations LCPAREN commandlist RCPAREN 
+
+	VAR	shift 6
+
+	declarations	goto 5
+	declaration	goto 4
+
+	.	reduce by rule 2
+
+
+state 4:
+
+	declarations : declaration . declarations 
+
+	VAR	shift 6
+
+	declarations	goto 7
+	declaration	goto 4
+
+	.	reduce by rule 2
+
+
+state 5:
+
+	start : PROGRAM IDENTIFIER DCOLON declarations . LCPAREN commandlist RCPAREN 
+
+	LCPAREN	shift 8
+
+
+	.	error
+
+
+state 6:
+
+	declaration : VAR . variablelist COLON INT SCOLON 
+	declaration : VAR . variablelist COLON BOOL SCOLON 
+
+	IDENTIFIER	shift 11
+
+	variablelist	goto 10
+	variable	goto 9
+
+	.	reduce by rule 7
+
+
+state 7:
+
+	declarations : declaration declarations .  (reduce by rule 1)
+
+
+
+	.	reduce by rule 1
+
+
+state 8:
+
+	start : PROGRAM IDENTIFIER DCOLON declarations LCPAREN . commandlist RCPAREN 
+
+	IF	shift 18
+	WHILE	shift 17
+	READ	shift 16
+	WRITE	shift 15
+	IDENTIFIER	shift 11
+
+	commandlist	goto 14
+	command	goto 13
+	variable	goto 12
+
+	.	reduce by rule 9
+
+
+state 9:
+
+	variablelist : variable . COMMA variablelist 
+	variablelist : variable .  (reduce by rule 6)
+
+	COMMA	shift 19
+
+
+	.	reduce by rule 6
+
+
+state 10:
+
+	declaration : VAR variablelist . COLON INT SCOLON 
+	declaration : VAR variablelist . COLON BOOL SCOLON 
+
+	COLON	shift 20
+
+
+	.	error
+
+
+state 11:
+
+	variable : IDENTIFIER .  (reduce by rule 43)
+
+
+
+	.	reduce by rule 43
+
+
+state 12:
+
+	command : variable . ASSIGN expression 
+
+	ASSIGN	shift 21
+
+
+	.	error
+
+
+state 13:
+
+	commandlist : command . SCOLON commandlist 
+
+	SCOLON	shift 22
+
+
+	.	error
+
+
+state 14:
+
+	start : PROGRAM IDENTIFIER DCOLON declarations LCPAREN commandlist . RCPAREN 
+
+	RCPAREN	shift 23
+
+
+	.	error
+
+
+state 15:
+
+	command : WRITE . expression 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	expression	goto 32
+	or_exp	goto 31
+	and_exp	goto 30
+	eq_exp	goto 29
+	rel_exp	goto 28
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 16:
+
+	command : READ . variable 
+
+	IDENTIFIER	shift 11
+
+	variable	goto 40
+
+	.	error
+
+
+state 17:
+
+	command : WHILE . expression DO LCPAREN commandlist RCPAREN ENDWH 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	expression	goto 41
+	or_exp	goto 31
+	and_exp	goto 30
+	eq_exp	goto 29
+	rel_exp	goto 28
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 18:
+
+	command : IF . expression THEN LCPAREN commandlist RCPAREN ELSE LCPAREN commandlist RCPAREN ENDIF 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	expression	goto 42
+	or_exp	goto 31
+	and_exp	goto 30
+	eq_exp	goto 29
+	rel_exp	goto 28
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 19:
+
+	variablelist : variable COMMA . variablelist 
+
+	IDENTIFIER	shift 11
+
+	variablelist	goto 43
+	variable	goto 9
+
+	.	reduce by rule 7
+
+
+state 20:
+
+	declaration : VAR variablelist COLON . INT SCOLON 
+	declaration : VAR variablelist COLON . BOOL SCOLON 
+
+	INT	shift 45
+	BOOL	shift 44
+
+
+	.	error
+
+
+state 21:
+
+	command : variable ASSIGN . expression 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	expression	goto 46
+	or_exp	goto 31
+	and_exp	goto 30
+	eq_exp	goto 29
+	rel_exp	goto 28
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 22:
+
+	commandlist : command SCOLON . commandlist 
+
+	IF	shift 18
+	WHILE	shift 17
+	READ	shift 16
+	WRITE	shift 15
+	IDENTIFIER	shift 11
+
+	commandlist	goto 47
+	command	goto 13
+	variable	goto 12
+
+	.	reduce by rule 9
+
+
+state 23:
+
+	start : PROGRAM IDENTIFIER DCOLON declarations LCPAREN commandlist RCPAREN .  (reduce by rule 0)
+
+
+
+	.	reduce by rule 0
+
+
+state 24:
+
+	unary_exp : primary_exp .  (reduce by rule 37)
+
+
+
+	.	reduce by rule 37
+
+
+state 25:
+
+	mult_exp : unary_exp . MUL mult_exp 
+	mult_exp : unary_exp . DIV mult_exp 
+	mult_exp : unary_exp . MOD mult_exp 
+	mult_exp : unary_exp .  (reduce by rule 34)
+
+	MUL	shift 50
+	DIV	shift 49
+	MOD	shift 48
+
+
+	.	reduce by rule 34
+
+
+state 26:
+
+	add_exp : mult_exp . PLUS add_exp 
+	add_exp : mult_exp . MINUS add_exp 
+	add_exp : mult_exp .  (reduce by rule 30)
+
+	PLUS	shift 52
+	MINUS	shift 51
+
+
+	.	reduce by rule 30
+
+
+state 27:
+
+	rel_exp : add_exp . GT rel_exp 
+	rel_exp : add_exp . GTE rel_exp 
+	rel_exp : add_exp . LT rel_exp 
+	rel_exp : add_exp . LTE rel_exp 
+	rel_exp : add_exp .  (reduce by rule 27)
+
+	LT	shift 56
+	GT	shift 55
+	LTE	shift 54
+	GTE	shift 53
+
+
+	.	reduce by rule 27
+
+
+state 28:
+
+	eq_exp : rel_exp . EQ eq_exp 
+	eq_exp : rel_exp . NEQ eq_exp 
+	eq_exp : rel_exp .  (reduce by rule 22)
+
+	EQ	shift 58
+	NEQ	shift 57
+
+
+	.	reduce by rule 22
+
+
+state 29:
+
+	and_exp : eq_exp . AND and_exp 
+	and_exp : eq_exp .  (reduce by rule 19)
+
+	AND	shift 59
+
+
+	.	reduce by rule 19
+
+
+state 30:
+
+	or_exp : and_exp . OR or_exp 
+	or_exp : and_exp .  (reduce by rule 17)
+
+	OR	shift 60
+
+
+	.	reduce by rule 17
+
+
+state 31:
+
+	expression : or_exp .  (reduce by rule 15)
+
+
+
+	.	reduce by rule 15
+
+
+state 32:
+
+	command : WRITE expression .  (reduce by rule 12)
+
+
+
+	.	reduce by rule 12
+
+
+state 33:
+
+	primary_exp : variable .  (reduce by rule 38)
+
+
+
+	.	reduce by rule 38
+
+
+state 34:
+
+	unary_exp : NEG . unary_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	unary_exp	goto 61
+	primary_exp	goto 24
+
+	.	error
+
+
+state 35:
+
+	primary_exp : NUMBER .  (reduce by rule 39)
+
+
+
+	.	reduce by rule 39
+
+
+state 36:
+
+	unary_exp : NOT . unary_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	unary_exp	goto 62
+	primary_exp	goto 24
+
+	.	error
+
+
+state 37:
+
+	primary_exp : FALSE .  (reduce by rule 41)
+
+
+
+	.	reduce by rule 41
+
+
+state 38:
+
+	primary_exp : TRUE .  (reduce by rule 40)
+
+
+
+	.	reduce by rule 40
+
+
+state 39:
+
+	primary_exp : LPAREN . expression RPAREN 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	expression	goto 63
+	or_exp	goto 31
+	and_exp	goto 30
+	eq_exp	goto 29
+	rel_exp	goto 28
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 40:
+
+	command : READ variable .  (reduce by rule 11)
+
+
+
+	.	reduce by rule 11
+
+
+state 41:
+
+	command : WHILE expression . DO LCPAREN commandlist RCPAREN ENDWH 
+
+	DO	shift 64
+
+
+	.	error
+
+
+state 42:
+
+	command : IF expression . THEN LCPAREN commandlist RCPAREN ELSE LCPAREN commandlist RCPAREN ENDIF 
+
+	THEN	shift 65
+
+
+	.	error
+
+
+state 43:
+
+	variablelist : variable COMMA variablelist .  (reduce by rule 5)
+
+
+
+	.	reduce by rule 5
+
+
+state 44:
+
+	declaration : VAR variablelist COLON BOOL . SCOLON 
+
+	SCOLON	shift 66
+
+
+	.	error
+
+
+state 45:
+
+	declaration : VAR variablelist COLON INT . SCOLON 
+
+	SCOLON	shift 67
+
+
+	.	error
+
+
+state 46:
+
+	command : variable ASSIGN expression .  (reduce by rule 10)
+
+
+
+	.	reduce by rule 10
+
+
+state 47:
+
+	commandlist : command SCOLON commandlist .  (reduce by rule 8)
+
+
+
+	.	reduce by rule 8
+
+
+state 48:
+
+	mult_exp : unary_exp MOD . mult_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	mult_exp	goto 68
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 49:
+
+	mult_exp : unary_exp DIV . mult_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	mult_exp	goto 69
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 50:
+
+	mult_exp : unary_exp MUL . mult_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	mult_exp	goto 70
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 51:
+
+	add_exp : mult_exp MINUS . add_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	add_exp	goto 71
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 52:
+
+	add_exp : mult_exp PLUS . add_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	add_exp	goto 72
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 53:
+
+	rel_exp : add_exp GTE . rel_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	rel_exp	goto 73
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 54:
+
+	rel_exp : add_exp LTE . rel_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	rel_exp	goto 74
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 55:
+
+	rel_exp : add_exp GT . rel_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	rel_exp	goto 75
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 56:
+
+	rel_exp : add_exp LT . rel_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	rel_exp	goto 76
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 57:
+
+	eq_exp : rel_exp NEQ . eq_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	eq_exp	goto 77
+	rel_exp	goto 28
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 58:
+
+	eq_exp : rel_exp EQ . eq_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	eq_exp	goto 78
+	rel_exp	goto 28
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 59:
+
+	and_exp : eq_exp AND . and_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	and_exp	goto 79
+	eq_exp	goto 29
+	rel_exp	goto 28
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 60:
+
+	or_exp : and_exp OR . or_exp 
+
+	LPAREN	shift 39
+	TRUE	shift 38
+	FALSE	shift 37
+	NOT	shift 36
+	IDENTIFIER	shift 11
+	NUMBER	shift 35
+	NEG	shift 34
+
+	variable	goto 33
+	or_exp	goto 80
+	and_exp	goto 30
+	eq_exp	goto 29
+	rel_exp	goto 28
+	add_exp	goto 27
+	mult_exp	goto 26
+	unary_exp	goto 25
+	primary_exp	goto 24
+
+	.	error
+
+
+state 61:
+
+	unary_exp : NEG unary_exp .  (reduce by rule 35)
+
+
+
+	.	reduce by rule 35
+
+
+state 62:
+
+	unary_exp : NOT unary_exp .  (reduce by rule 36)
+
+
+
+	.	reduce by rule 36
+
+
+state 63:
+
+	primary_exp : LPAREN expression . RPAREN 
+
+	RPAREN	shift 81
+
+
+	.	error
+
+
+state 64:
+
+	command : WHILE expression DO . LCPAREN commandlist RCPAREN ENDWH 
+
+	LCPAREN	shift 82
+
+
+	.	error
+
+
+state 65:
+
+	command : IF expression THEN . LCPAREN commandlist RCPAREN ELSE LCPAREN commandlist RCPAREN ENDIF 
+
+	LCPAREN	shift 83
+
+
+	.	error
+
+
+state 66:
+
+	declaration : VAR variablelist COLON BOOL SCOLON .  (reduce by rule 4)
+
+
+
+	.	reduce by rule 4
+
+
+state 67:
+
+	declaration : VAR variablelist COLON INT SCOLON .  (reduce by rule 3)
+
+
+
+	.	reduce by rule 3
+
+
+state 68:
+
+	mult_exp : unary_exp MOD mult_exp .  (reduce by rule 33)
+
+
+
+	.	reduce by rule 33
+
+
+state 69:
+
+	mult_exp : unary_exp DIV mult_exp .  (reduce by rule 32)
+
+
+
+	.	reduce by rule 32
+
+
+state 70:
+
+	mult_exp : unary_exp MUL mult_exp .  (reduce by rule 31)
+
+
+
+	.	reduce by rule 31
+
+
+state 71:
+
+	add_exp : mult_exp MINUS add_exp .  (reduce by rule 29)
+
+
+
+	.	reduce by rule 29
+
+
+state 72:
+
+	add_exp : mult_exp PLUS add_exp .  (reduce by rule 28)
+
+
+
+	.	reduce by rule 28
+
+
+state 73:
+
+	rel_exp : add_exp GTE rel_exp .  (reduce by rule 24)
+
+
+
+	.	reduce by rule 24
+
+
+state 74:
+
+	rel_exp : add_exp LTE rel_exp .  (reduce by rule 26)
+
+
+
+	.	reduce by rule 26
+
+
+state 75:
+
+	rel_exp : add_exp GT rel_exp .  (reduce by rule 23)
+
+
+
+	.	reduce by rule 23
+
+
+state 76:
+
+	rel_exp : add_exp LT rel_exp .  (reduce by rule 25)
+
+
+
+	.	reduce by rule 25
+
+
+state 77:
+
+	eq_exp : rel_exp NEQ eq_exp .  (reduce by rule 21)
+
+
+
+	.	reduce by rule 21
+
+
+state 78:
+
+	eq_exp : rel_exp EQ eq_exp .  (reduce by rule 20)
+
+
+
+	.	reduce by rule 20
+
+
+state 79:
+
+	and_exp : eq_exp AND and_exp .  (reduce by rule 18)
+
+
+
+	.	reduce by rule 18
+
+
+state 80:
+
+	or_exp : and_exp OR or_exp .  (reduce by rule 16)
+
+
+
+	.	reduce by rule 16
+
+
+state 81:
+
+	primary_exp : LPAREN expression RPAREN .  (reduce by rule 42)
+
+
+
+	.	reduce by rule 42
+
+
+state 82:
+
+	command : WHILE expression DO LCPAREN . commandlist RCPAREN ENDWH 
+
+	IF	shift 18
+	WHILE	shift 17
+	READ	shift 16
+	WRITE	shift 15
+	IDENTIFIER	shift 11
+
+	commandlist	goto 84
+	command	goto 13
+	variable	goto 12
+
+	.	reduce by rule 9
+
+
+state 83:
+
+	command : IF expression THEN LCPAREN . commandlist RCPAREN ELSE LCPAREN commandlist RCPAREN ENDIF 
+
+	IF	shift 18
+	WHILE	shift 17
+	READ	shift 16
+	WRITE	shift 15
+	IDENTIFIER	shift 11
+
+	commandlist	goto 85
+	command	goto 13
+	variable	goto 12
+
+	.	reduce by rule 9
+
+
+state 84:
+
+	command : WHILE expression DO LCPAREN commandlist . RCPAREN ENDWH 
+
+	RCPAREN	shift 86
+
+
+	.	error
+
+
+state 85:
+
+	command : IF expression THEN LCPAREN commandlist . RCPAREN ELSE LCPAREN commandlist RCPAREN ENDIF 
+
+	RCPAREN	shift 87
+
+
+	.	error
+
+
+state 86:
+
+	command : WHILE expression DO LCPAREN commandlist RCPAREN . ENDWH 
+
+	ENDWH	shift 88
+
+
+	.	error
+
+
+state 87:
+
+	command : IF expression THEN LCPAREN commandlist RCPAREN . ELSE LCPAREN commandlist RCPAREN ENDIF 
+
+	ELSE	shift 89
+
+
+	.	error
+
+
+state 88:
+
+	command : WHILE expression DO LCPAREN commandlist RCPAREN ENDWH .  (reduce by rule 14)
+
+
+
+	.	reduce by rule 14
+
+
+state 89:
+
+	command : IF expression THEN LCPAREN commandlist RCPAREN ELSE . LCPAREN commandlist RCPAREN ENDIF 
+
+	LCPAREN	shift 90
+
+
+	.	error
+
+
+state 90:
+
+	command : IF expression THEN LCPAREN commandlist RCPAREN ELSE LCPAREN . commandlist RCPAREN ENDIF 
+
+	IF	shift 18
+	WHILE	shift 17
+	READ	shift 16
+	WRITE	shift 15
+	IDENTIFIER	shift 11
+
+	commandlist	goto 91
+	command	goto 13
+	variable	goto 12
+
+	.	reduce by rule 9
+
+
+state 91:
+
+	command : IF expression THEN LCPAREN commandlist RCPAREN ELSE LCPAREN commandlist . RCPAREN ENDIF 
+
+	RCPAREN	shift 92
+
+
+	.	error
+
+
+state 92:
+
+	command : IF expression THEN LCPAREN commandlist RCPAREN ELSE LCPAREN commandlist RCPAREN . ENDIF 
+
+	ENDIF	shift 93
+
+
+	.	error
+
+
+state 93:
+
+	command : IF expression THEN LCPAREN commandlist RCPAREN ELSE LCPAREN commandlist RCPAREN ENDIF .  (reduce by rule 13)
+
+
+
+	.	reduce by rule 13
+
+
+state 94:
+
+
+	EOF	accept
+
+
+	.	error
+
+54 of 304 action table entries left after compaction
+158 goto table entries

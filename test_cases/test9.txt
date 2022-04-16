@@ -1,0 +1,16 @@
+program gcd :: 
+    var X: int;
+    var Y: int;
+    var rem: int;
+{   
+    read X;
+    read Y;
+    
+    while (Y <> 0) do 
+    {
+        rem := X % Y;
+ 	    X := Y;
+        Y := rem;
+    } endwh;
+    write X;
+}

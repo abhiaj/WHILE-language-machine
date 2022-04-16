@@ -1,0 +1,8 @@
+program test3::
+    var X, Y: int;
+    var Z: bool;
+{
+    read X;
+    read Y;
+    Z := X - Y ; 
+}

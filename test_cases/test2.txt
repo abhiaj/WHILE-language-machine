@@ -1,0 +1,8 @@
+program test1::
+    var A, B: int;
+    var C: int;
+{
+    A := 1;
+    B := 0;
+    C := A / B; 
+}

@@ -1,0 +1,16 @@
+program power :: 
+    var X: int;
+    var Y: int;
+    var power: int;
+{   
+    read X;
+    read Y;
+    power:=1;
+    while (Y <> 0) do 
+    {
+        power:=power*X;
+        Y:=Y-1;
+    } 
+    endwh;
+    write power;
+}

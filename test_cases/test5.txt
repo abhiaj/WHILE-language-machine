@@ -1,0 +1,16 @@
+program Fact ::
+    var X: int;
+    var Y: int;
+{
+     Y := 1;  
+     read X;
+     while(X > 0)
+     do {
+         Y := X * Y; 
+         X := X - 1; 
+        } 
+     endwh ; 
+     
+     write Y; 
+
+}

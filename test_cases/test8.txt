@@ -1,0 +1,13 @@
+program checkBool::
+	var A: bool;
+	var B: bool;
+	var C: bool;
+{
+	A:= tt;
+	B:= A && tt || ff;
+	C:= tt && A || (ff || B) && !tt;
+	write C;
+
+	write (tt && (A || (ff || B)) && !tt && (5 < 2));
+	write (C && (3*5 + 6 > 19+~2) && tt && 5 <> 9);
+}
